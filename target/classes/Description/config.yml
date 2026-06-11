@@ -1,0 +1,17 @@
+header: |-
+  AutoResourceChest - 配置文件
+  警告！编辑此文件前请确认您已掌握YAML语法！
+  您可以从这里学习YAML
+  https://www.runoob.com/w3cnote/yaml-intro.html
+footer: |-
+  你已经到达配置文件的底部啦
+
+
+autoWorld: |-
+  自动把箱子转换为资源箱的世界
+  格式：
+  autoWorld:
+    世界名称: 资源箱配置名称
+  例如:
+  autoWorld:
+    world: "test"

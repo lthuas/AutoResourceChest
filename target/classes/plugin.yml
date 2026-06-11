@@ -1,0 +1,13 @@
+name: AutoResourceChest
+main: cn.lanink.autoresourcechest.AutoResourceChest
+version: "0.4.5-SNAPSHOT"
+api: ["1.0.11"]
+load: POSTWORLD
+author: "LT_Name"
+depend:
+  - "KotlinLib"
+  - "MemoriesOfTime-GameCore"
+
+permissions:
+  autoresourcechest.admin:
+    default: op
