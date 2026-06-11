@@ -31,7 +31,15 @@ class OnListener(val autoResourceChest: AutoResourceChest) : Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        this.autoResourceChest.placeChestPlayer.remove(event.player ?: return)
+        val player = event.player ?: return
+        this.autoResourceChest.placeChestPlayer.remove(player)
+        for (manager in this.autoResourceChest.chestConfigMap.values) {
+            for (chest in manager.chests.values) {
+                if (chest.animatingPlayer == player) {
+                    chest.finishAnimation()
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -109,6 +117,15 @@ class OnListener(val autoResourceChest: AutoResourceChest) : Listener {
                 event.setCancelled()
                 return
             }
+            if (chest.isAnimating) {
+                event.setCancelled()
+                if (player == chest.animatingPlayer) {
+                    player.sendMessage("§e>> §c请等待开箱动画结束！")
+                } else {
+                    player.sendMessage("§e>> §c该资源箱正在被其他玩家打开，请稍后再试！")
+                }
+                return
+            }
             if (chest.chestManager.restrictOpenCount > 0) {
                 if (playerConfig.getOpenCount(block) >= chest.chestManager.restrictOpenCount) {
                     event.setCancelled()
@@ -128,12 +145,18 @@ class OnListener(val autoResourceChest: AutoResourceChest) : Listener {
                 if (chest.chestManager.enableOpenAnimation && !chest.isAnimating) {
                     val blockEntity = block.level.getBlockEntity(block) as? BlockEntityChest
                     if (blockEntity != null) {
-                        val savedItems = chest.startOpenAnimation(blockEntity.inventory)
+                        val savedItems = chest.startOpenAnimation(blockEntity.inventory, player)
                         val task = ChestOpenAnimationTask(
                             this.autoResourceChest,
                             chest,
                             block,
-                            savedItems
+                            savedItems,
+                            blockEntity.inventory.size,
+                            chest.chestManager.animationMode,
+                            chest.chestManager.gradientTransition,
+                            chest.chestManager.animationSound,
+                            chest.chestManager.animationParticle,
+                            player
                         )
                         Server.getInstance().scheduler.scheduleRepeatingTask(
                             this.autoResourceChest,

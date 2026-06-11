@@ -22,7 +22,11 @@ class ChestManager(val name: String, private val config: Config) {
     var restrictOpenCount: Int = config.getInt("限制打开次数", -1)
     var maxRandomItemCount: Int = config.getInt("随机物品种类数量限制")
     var enableOpenAnimation: Boolean = config.getBoolean("开箱动画", true)
-    var animationSpeed: Int = config.getInt("动画速度(tick)", 2)
+    var animationSpeed: Int = config.getInt("动画速度(tick)", 2).coerceAtLeast(1)
+    var animationMode: String = config.getString("动画模式", "LINEAR")
+    var gradientTransition: Boolean = config.getBoolean("渐变色过渡", true)
+    var animationSound: Boolean = config.getBoolean("动画音效", true)
+    var animationParticle: Boolean = config.getBoolean("动画粒子", true)
     var fixedItems = ArrayList<FixedItem>()
     var randomItems = ArrayList<RandomItem>()
     val chests: MutableMap<Position, Chest> = ConcurrentHashMap()
@@ -74,6 +78,10 @@ class ChestManager(val name: String, private val config: Config) {
         this.config.set("随机物品种类数量限制", this.maxRandomItemCount)
         this.config.set("开箱动画", this.enableOpenAnimation)
         this.config.set("动画速度(tick)", this.animationSpeed)
+        this.config.set("动画模式", this.animationMode)
+        this.config.set("渐变色过渡", this.gradientTransition)
+        this.config.set("动画音效", this.animationSound)
+        this.config.set("动画粒子", this.animationParticle)
 
         val fixedItemList = mutableListOf<String>()
         for (fixedItem: FixedItem in this.fixedItems) {

@@ -9,6 +9,10 @@ showName: |-
 随机物品种类数量限制: 3
 开箱动画: true
 动画速度(tick): 2
+动画模式: LINEAR
+渐变色过渡: true
+动画音效: true
+动画粒子: true
 fixedItem:
   - "267:0&1"
 randomItem:

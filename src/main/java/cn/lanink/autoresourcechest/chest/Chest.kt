@@ -2,6 +2,7 @@ package cn.lanink.autoresourcechest.chest
 
 import cn.lanink.autoresourcechest.entity.EntityText
 import cn.lanink.autoresourcechest.utils.Utils.Companion.formatTime
+import cn.nukkit.Player
 import cn.nukkit.block.Block
 import cn.nukkit.blockentity.BlockEntityChest
 import cn.nukkit.inventory.BaseInventory
@@ -22,6 +23,8 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
     private var text: EntityText? = null
     var isNeedRefresh = false
     var isAnimating = false
+        private set
+    var animatingPlayer: Player? = null
         private set
 
     init {
@@ -74,6 +77,9 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
     }
 
     private fun refreshInventory() {
+        if (this.isAnimating) {
+            this.finishAnimation()
+        }
         var blockEntity = this.position.getLevel().getBlockEntity(this.position)
         if (blockEntity !is BlockEntityChest) {
             this.position.getLevel().setBlock(this.position, Block.get(Block.CHEST))
@@ -105,33 +111,37 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
         }
     }
 
-    fun startOpenAnimation(inventory: BaseInventory): Map<Int, Item> {
+    fun startOpenAnimation(inventory: BaseInventory, player: Player): Map<Int, Item> {
         this.isAnimating = true
-        val saved = HashMap<Int, Item>()
+        this.animatingPlayer = player
+        val saved = HashMap<Int, Item>(inventory.size)
         for (i in 0 until inventory.size) {
             val item = inventory.getItem(i)
             if (item.id != 0) {
                 saved[i] = item.clone()
             }
-        }
-        val blackGlass = Item.get(160, 15, 1)
-        for (i in 0 until inventory.size) {
-            inventory.setItem(i, blackGlass.clone())
+            inventory.setItem(i, PLACEHOLDER_ITEM.clone())
         }
         return saved
     }
 
     fun finishAnimation() {
         this.isAnimating = false
+        this.animatingPlayer = null
     }
 
     fun close() {
+        this.finishAnimation()
         this.closed = true
         this.text?.close()
         val blockEntity = this.position.getLevel().getBlockEntity(this.position)
         if (blockEntity != null && blockEntity is BlockEntityChest) {
             blockEntity.inventory.clearAll()
         }
+    }
+
+    companion object {
+        private val PLACEHOLDER_ITEM = Item.get(241, 7, 1)
     }
 
 }
