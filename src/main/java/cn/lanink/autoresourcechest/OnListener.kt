@@ -185,8 +185,14 @@ class OnListener(val autoResourceChest: AutoResourceChest) : Listener {
             if (inv is ChestInventory) {
                 val chest: Chest = this.autoResourceChest.getChestByPos(inv.holder) ?: return
                 if (chest.isAnimating) {
-                    event.isCancelled = true
-                    return
+                    for (action in transaction.actions) {
+                        if (action is SlotChangeAction && action.inventory == inv) {
+                            if (!chest.revealedSlots.contains(action.slot)) {
+                                event.isCancelled = true
+                                return
+                            }
+                        }
+                    }
                 }
                 if (chest.chestManager.canBePutIn) {
                     return

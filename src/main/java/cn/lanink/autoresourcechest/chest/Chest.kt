@@ -28,6 +28,7 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
         private set
     var savedItems: Map<Int, Item>? = null
         private set
+    val revealedSlots: MutableSet<Int> = HashSet()
 
     init {
         if (chestManager.showName.isNotBlank()) {
@@ -117,6 +118,7 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
     fun startOpenAnimation(inventory: BaseInventory, player: Player): Map<Int, Item> {
         this.isAnimating = true
         this.animatingPlayer = player
+        this.revealedSlots.clear()
         val saved = HashMap<Int, Item>(inventory.size)
         for (i in 0 until inventory.size) {
             val item = inventory.getItem(i)
@@ -132,6 +134,7 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
     fun finishAnimation() {
         this.isAnimating = false
         this.animatingPlayer = null
+        this.revealedSlots.clear()
     }
 
     fun clearSavedItems() {

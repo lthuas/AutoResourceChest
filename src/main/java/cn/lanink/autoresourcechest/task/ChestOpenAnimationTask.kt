@@ -73,6 +73,8 @@ class ChestOpenAnimationTask(
                 inventory.setItem(slot, EMPTY_ITEM)
             }
 
+            chest.revealedSlots.add(slot)
+
             particleSoundCounter++
             if (particleSoundCounter % 3 == 0) {
                 if (playParticle) {
