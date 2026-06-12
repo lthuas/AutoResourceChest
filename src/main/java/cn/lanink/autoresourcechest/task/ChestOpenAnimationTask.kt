@@ -34,6 +34,8 @@ class ChestOpenAnimationTask(
         if (!chest.isAnimating || currentIndex >= slotOrder.size) {
             if (chest.isAnimating) {
                 chest.finishAnimation()
+            } else {
+                restoreRemainingSlots()
             }
             this.cancel()
             return
@@ -83,6 +85,25 @@ class ChestOpenAnimationTask(
 
             stage = 0
             currentIndex++
+        }
+    }
+
+    private fun restoreRemainingSlots() {
+        val saved = chest.savedItems ?: return
+        chest.clearSavedItems()
+        val be = this.blockEntity
+        if (be == null || be.level == null) {
+            return
+        }
+        val inventory = be.inventory
+        for (i in currentIndex until slotOrder.size) {
+            val slot = slotOrder[i]
+            val savedItem = saved[slot]
+            if (savedItem != null) {
+                inventory.setItem(slot, savedItem.clone())
+            } else {
+                inventory.setItem(slot, EMPTY_ITEM)
+            }
         }
     }
 

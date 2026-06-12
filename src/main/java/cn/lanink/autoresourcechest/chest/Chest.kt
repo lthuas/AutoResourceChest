@@ -26,6 +26,8 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
         private set
     var animatingPlayer: Player? = null
         private set
+    var savedItems: Map<Int, Item>? = null
+        private set
 
     init {
         if (chestManager.showName.isNotBlank()) {
@@ -90,6 +92,7 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
         }
         val inventory: BaseInventory = blockEntity.inventory
         inventory.clearAll()
+        this.savedItems = null
         val itemList = mutableListOf<Item>()
         itemList.addAll(this.chestManager.getFixedItems())
         itemList.addAll(this.chestManager.getRandomItems())
@@ -122,12 +125,17 @@ class Chest(val chestManager: ChestManager, private var position: Position) {
             }
             inventory.setItem(i, PLACEHOLDER_ITEM.clone())
         }
+        this.savedItems = saved
         return saved
     }
 
     fun finishAnimation() {
         this.isAnimating = false
         this.animatingPlayer = null
+    }
+
+    fun clearSavedItems() {
+        this.savedItems = null
     }
 
     fun close() {
