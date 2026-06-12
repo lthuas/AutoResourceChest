@@ -36,7 +36,7 @@ class AutoResourceChest : PluginBase() {
     companion object {
         @JvmStatic
         val RANDOM = Random()
-        const val VERSION = "0.4.5-SNAPSHOT git-25234a6"
+        const val VERSION = "0.4.5-SNAPSHOT git-dc02ade"
         const val MINIMUM_GAME_CORE_VERSION = "1.6.12"
         var debug = false
         var instance: AutoResourceChest? = null
