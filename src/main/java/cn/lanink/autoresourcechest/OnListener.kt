@@ -118,13 +118,11 @@ class OnListener(val autoResourceChest: AutoResourceChest) : Listener {
                 return
             }
             if (chest.isAnimating) {
-                event.setCancelled()
-                if (player == chest.animatingPlayer) {
-                    player.sendMessage("§e>> §c请等待开箱动画结束！")
-                } else {
+                if (player != chest.animatingPlayer) {
+                    event.setCancelled()
                     player.sendMessage("§e>> §c该资源箱正在被其他玩家打开，请稍后再试！")
+                    return
                 }
-                return
             }
             if (chest.chestManager.restrictOpenCount > 0) {
                 if (playerConfig.getOpenCount(block) >= chest.chestManager.restrictOpenCount) {
